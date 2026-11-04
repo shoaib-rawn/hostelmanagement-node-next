@@ -15,8 +15,9 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   });
   next();
 });
+
 app.use("/health", healthRouter);
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((req: Request, res: Response) => {
   res.status(404).json({ error: "Not Found" });
 });
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
