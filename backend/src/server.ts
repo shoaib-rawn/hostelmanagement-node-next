@@ -1,7 +1,15 @@
 import { app } from "./app";
+import { env } from "./config/env";
+import { logger } from "./lib/logger";
 
-const PORT = Number(process.env.PORT ?? 4000);
-
-app.listen(PORT, () => {
-  console.log(`API running on http://localhost:${PORT}`);
+const server = app.listen(env.PORT, () => {
+  logger.info(`API running on http://localhost:${env.PORT} (${env.NODE_ENV})`);
 });
+
+function shutdown(signal: string) {
+  logger.info(`${signal} received, shutting down`);
+  server.close(() => process.exit(0));
+}
+
+process.on("SIGINT", () => shutdown("SIGINT"));
+process.on("SIGTERM", () => shutdown("SIGTERM"));
