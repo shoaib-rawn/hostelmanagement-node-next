@@ -3,6 +3,9 @@ import { z } from "zod";
 
 const envSchema = z.object({
   DATABASE_URL: z.string().startsWith("postgres"),
+  JWT_ACCESS_SECRET: z.string().min(32),
+  ACCESS_TOKEN_TTL_SECONDS: z.coerce.number().int().positive().default(7200),
+  REFRESH_TOKEN_TTL_DAYS: z.coerce.number().int().positive().default(7),
   NODE_ENV: z
     .enum(["development", "test", "production"])
     .default("development"),

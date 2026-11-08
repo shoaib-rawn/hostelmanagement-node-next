@@ -12,4 +12,15 @@ export const signupSchema = z.object({
     .regex(/[0-9]/, "Password mein kam az kam ek number ho"),
 });
 
+export const loginSchema = z.object({
+  email: z.string().trim().toLowerCase().email(),
+  password: z.string().min(1, "Password likhna zaroori hai").max(128),
+});
+
+export const refreshSchema = z.object({
+  refreshToken: z.string().min(1, "refreshToken zaroori hai").max(512),
+});
+
+export type LoginInput = z.infer<typeof loginSchema>;
+export type RefreshInput = z.infer<typeof refreshSchema>;
 export type SignupInput = z.infer<typeof signupSchema>;
