@@ -204,3 +204,23 @@ export async function logout(refreshToken: string) {
 export async function logoutAll(userId: string) {
   await revokeAllRefreshTokens(userId);
 }
+export async function getMe(userId: string) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      email: true,
+      fullName: true,
+      role: true,
+      hostelId: true,
+      createdAt: true,
+      hostel: { select: { id: true, name: true } },
+    },
+  });
+
+  if (!user) {
+    throw new AppError(404, "User nahi mila", "NOT_FOUND");
+  }
+
+  return user;
+}

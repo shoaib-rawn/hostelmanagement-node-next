@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { authenticate, getAuth } from "../middleware/authenticate";
 import { validateBody } from "../middleware/validate";
 import {
   loginSchema,
@@ -8,8 +9,14 @@ import {
   type RefreshInput,
   type SignupInput,
 } from "../schemas/auth.schema";
-import { login, logout, refresh, signup } from "../services/auth.service";
-
+import {
+  getMe,
+  login,
+  logout,
+  logoutAll,
+  refresh,
+  signup,
+} from "../services/auth.service";
 export const authRouter = Router();
 
 authRouter.post("/signup", validateBody(signupSchema), async (req, res) => {
@@ -33,5 +40,16 @@ authRouter.post("/refresh", validateBody(refreshSchema), async (req, res) => {
 authRouter.post("/logout", validateBody(refreshSchema), async (req, res) => {
   const { refreshToken } = req.body as RefreshInput;
   await logout(refreshToken);
+  res.status(204).end();
+});
+authRouter.get("/me", authenticate, async (req, res) => {
+  const { userId } = getAuth(req);
+  const me = await getMe(userId);
+  res.json(me);
+});
+
+authRouter.post("/logout-all", authenticate, async (req, res) => {
+  const { userId } = getAuth(req);
+  await logoutAll(userId);
   res.status(204).end();
 });
